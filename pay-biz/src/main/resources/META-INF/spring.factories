@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.jcidtech.pay.wx.configuration.WxPayV3AutoConfiguration

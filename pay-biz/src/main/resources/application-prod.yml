@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    username: root
+    password: 12345678%wQ
+    url: jdbc:mysql://localhost:3306/imidouer?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai&useSSL=false
+jc:
+  host: http://192.168.2.11:8080/pay/order/create-order?id=%s&payChannel=%s

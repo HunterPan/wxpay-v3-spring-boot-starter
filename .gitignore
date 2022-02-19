@@ -29,7 +29,8 @@ build/
 
 ### VS Code ###
 .vscode/
-
+application.yml
+apiclient_key.pem
 ### 测试微信支付敏感信息 ###
 application-test.properties
 apiclient_key_test.pem

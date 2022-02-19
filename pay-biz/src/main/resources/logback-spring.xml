@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds">
+    <!-- 自定义参数监听 -->
+
+    <springProperty scope="context" name="springAppName" source="spring.application.name"/>
+    <springProperty scope="context" name="springApplicationName" source="spring.application.name" defaultValue="default-app"/>
+    <springProperty scope="context" name="rootLoggerPath" source="logging.file.path" defaultValue="./log"/>
+    <!-- 彩色日志依赖的渲染类 -->
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <conversionRule conversionWord="wex"
+                    converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
+    <conversionRule conversionWord="wEx"
+                    converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
+    <!-- 彩色日志格式 -->
+    <property name="CONSOLE_LOG_PATTERN"
+              value="${CONSOLE_LOG_PATTERN:-%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+    <property name="APP_LOG_PATH" value="${LOG_PATH:-${rootLoggerPath} }"/>
+    <property name="APP_LOG_NAME" value="${APP_LOG_NAME:-${springApplicationName}}"/>
+
+    <!-- info -->
+    <property name="rollingFileNamePattern" value="${APP_LOG_PATH}/%d{yyyy-MM-dd}/${APP_LOG_NAME}-%d{yyyy-MM-dd}-%i.log.gz"/>
+    <property name="LOG_FILE" value="${APP_LOG_PATH}/${APP_LOG_NAME}.log"/>
+    <!--error-->
+    <property name="rollingFileNamePatternForError" value="${APP_LOG_PATH}/%d{yyyy-MM-dd}/error-%d{yyyy-MM-dd}-%i.log.gz"/>
+    <property name="ERROR_LOG_FILE" value="${APP_LOG_PATH}/error.log}"/>
+
+
+    <property name="MAX_HISTORY" value="30"/>
+    <property name="TOTAL_SIZE_CAP" value="3GB"/>
+    <property name="MAX_FILE_SIZE" value="200MB"/>
+    <property name="QUEUE_SIZE" value="1024"/>
+    <!-- 控制台输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 生成日志文件 -->
+    <appender name="INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE}</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%n%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{traceId}] [%logger{50}.%M:%L] %-5level: %msg%n</pattern>
+            <charset>utf8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>${rollingFileNamePattern}</fileNamePattern>
+            <!-- each file should be at most 100MB -->
+            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            <!-- keep 60 days' worth of history capped at 3GB total size -->
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+            <totalSizeCap>${TOTAL_SIZE_CAP}</totalSizeCap>
+        </rollingPolicy>
+        <!-- 打印日志级别 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>NEUTRAL</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- 生成日志文件 -->
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${ERROR_LOG_FILE}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 日志文件输出的文件名 -->
+            <!-- daily rollover -->
+            <fileNamePattern>${rollingFileNamePatternForError}</fileNamePattern>
+            <!-- each file should be at most 100MB -->
+            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            <!-- keep 60 days' worth of history capped at 3GB total size -->
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+            <totalSizeCap>${TOTAL_SIZE_CAP}</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%n%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{traceId}] [%logger{50}.%M:%L] %-5level: %msg%n</pattern>
+            <charset>utf8</charset>
+        </encoder>
+        <!-- 打印日志级别 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- 日志输出级别 -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ERROR"/>
+        <appender-ref ref="INFO"/>
+    </root>
+
+    <logger name="net.sf.ehcache" level="INFO"/>
+    <logger name="druid.sql" level="INFO"/>
+    <logger name="org.springblade.core.log.aspect" level="ERROR"/>
+</configuration>

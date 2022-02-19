@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    username: root
+    password: dO1l30sNX5dWFIgB
+    url: jdbc:mysql://localhost:3306/jcpay?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai&useSSL=false
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 10
+      idle-timeout: 180000
+      pool-name: jcPayHikaCP
+      connection-test-query: select 1
+jc:
+  host: http://192.168.2.11:8080/pay/order/create-order?id=%s&payChannel=%s
